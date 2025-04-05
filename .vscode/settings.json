@@ -1,0 +1,27 @@
+{
+    "editor.rulers": [
+        80,
+    ],
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "files.eol": "auto",
+    "files.trimTrailingWhitespace": true,
+    "java.project.sourcePaths": [
+        "src",
+        "test"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "java.saveActions.cleanup": true,
+    "java.cleanup.actions": [
+        "qualifyMembers",
+        "addOverride"
+    ],
+    "java.debug.settings.vmArgs": "-ea"
+}

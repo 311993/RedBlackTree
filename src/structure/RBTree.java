@@ -1,6 +1,7 @@
+package structure;
 import java.util.Iterator;
 
-class RBTree<T extends Comparable<T>> implements Iterable<T>{
+public class RBTree<T extends Comparable<T>> implements Iterable<T>{
 
     private RBNode root;
 
@@ -26,7 +27,7 @@ class RBTree<T extends Comparable<T>> implements Iterable<T>{
         this.insert(key);
     }
 
-
+    /**Inserts a new node with value {@code key} into the Red-Black Tree.*/
     public void insert(T key){
         
         //Find parent for node
