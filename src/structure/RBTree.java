@@ -43,8 +43,6 @@ public class RBTree<T extends Comparable<T>> implements Iterable<T> {
     /** Inserts a new node with value {@code key} into the Red-Black Tree. */
     public void insert(T key) {
 
-        this.size++;
-
         // Find parent for node
         RBNode parent = this.locateParent(key);
 
@@ -53,15 +51,14 @@ public class RBTree<T extends Comparable<T>> implements Iterable<T> {
 
         if (parent == null) {
             this.root = newNode;
-
         } else if (key.compareTo(parent.key) < 0) {
             parent.left = newNode;
-
         } else {
             parent.right = newNode;
         }
 
         // Maintain Red-Black Tree properties
+        this.size++;
         this.correctInsert(newNode);
     }
 
@@ -82,6 +79,7 @@ public class RBTree<T extends Comparable<T>> implements Iterable<T> {
     /** Rotates left about node {@code n}, which must have a right child. */
     private void rotateLeft(RBNode n) {
 
+        // Check what side of the parent this is
         int dir = 0;
 
         if (n != this.root) {
@@ -114,6 +112,7 @@ public class RBTree<T extends Comparable<T>> implements Iterable<T> {
     /** Rotates left about node {@code n}, which must have a right child. */
     private void rotateRight(RBNode n) {
 
+        // Check what side of the parent this is
         int dir = 0;
 
         if (n != this.root) {
@@ -181,67 +180,54 @@ public class RBTree<T extends Comparable<T>> implements Iterable<T> {
     /** Corrects tree to maintain Red-Black Tree properties after insertion. */
     private void correctInsert(RBNode n) {
 
-        // Case 1: Parent Black - No Correction Needed
-        if (this.isBlack(n.parent)) {
-            return;
-        }
+        // Case 1: Parent Black - Done
+        while (!this.isBlack(n.parent)) {
 
-        // Case 2: Parent Red and Root - Recolor parent
-        if (n.parent == this.root) {
+            // Case 2: Parent Red and Root - Recolor parent
+            if (n.parent == this.root) {
+                n.parent.red = false;
+                return;
+            }
 
-            n.parent.red = false;
-            return;
-        }
+            RBNode pSibling = this.sibling(n.parent);
 
-        RBNode pSibling = this.sibling(n.parent);
+            // Case 3: Parent Red and pSibling Black - Rotate to correct
+            if (this.isBlack(pSibling)) {
 
-        // TODO: fix case 3, does not propagate upwards
-        // Case 3: Parent Red and pSibling Red - Recolor Parent and pSibling upward
-        if (!this.isBlack(n.parent) && !this.isBlack(pSibling)) {
+                // Left Child
+                if (n == n.parent.left) {
 
-            pSibling = this.sibling(n.parent);
+                    // Ensure n an 'outer child'
+                    if (n.parent == n.parent.parent.right) {
+                        n = n.parent;
+                        this.rotateLeft(n);
+                    }
 
-            while (n != this.root && !this.isBlack(n.parent)) {
-                if (this.isBlack(pSibling)) {
-                    return;
+                    this.rotateRight(n.parent.parent);
+
+                    // Right Child
+                } else if (n == n.parent.right) {
+
+                    // Ensure n an 'outer child'
+                    if (n.parent == n.parent.parent.left) {
+                        n = n.parent;
+                        this.rotateRight(n);
+                    }
+
+                    this.rotateLeft(n.parent.parent);
                 }
 
+                // Finish
                 n.parent.red = false;
-                pSibling.red = false;
-                n = n.parent.parent;
-                n.red = true;
+                this.sibling(n).red = true;
+                return;
             }
 
-            return;
-        }
-
-        // Case 4: Parent Red and pSibling Black - Rotate to correct
-
-        // Left Child
-        if (n == n.parent.left) {
-
-            // Ensure n an 'outer child'
-            if (n.parent == n.parent.parent.right) {
-                n = n.parent;
-                this.rotateLeft(n);
-            }
-
-            this.rotateRight(n.parent.parent);
+            // Case 4: Parent Red and pSibling Red - Recolor Parent and pSibling upward
             n.parent.red = false;
-            this.sibling(n).red = true;
-
-            // Right Child
-        } else if (n == n.parent.right) {
-
-            // Ensure n an 'outer child'
-            if (n.parent == n.parent.parent.left) {
-                n = n.parent;
-                this.rotateRight(n);
-            }
-
-            this.rotateLeft(n.parent.parent);
-            n.parent.red = false;
-            this.sibling(n).red = true;
+            pSibling.red = false;
+            n = n.parent.parent;
+            n.red = true;
         }
     }
 
